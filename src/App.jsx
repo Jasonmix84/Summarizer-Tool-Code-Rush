@@ -3,13 +3,16 @@ import { useState } from 'react'
 // import viteLogo from '/vite.svg'
 import './App.css'
 import { GoogleGenAI } from "@google/genai"
+import Spinner from 'react-bootstrap/Spinner';
+import ListGroup from 'react-bootstrap/ListGroup';
 const apiKey = import.meta.env.VITE_API_KEY;
 
 
 function App() {
   const [text, setText] = useState("");
   const [fullText, setFullText] = useState("");
-  const [AIResponse, setAIResponse] = useState("Please try again");
+  const [AIResponse, setAIResponse] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   console.log("starting")
   const ai = new GoogleGenAI( { apiKey: apiKey});
 
@@ -27,8 +30,10 @@ function App() {
       }
     });
     console.log("response is ", String(response.text))
-    setAIResponse(String(response.text));
-
+    const unstructured_response = String(response.text)
+    const structured_response = unstructured_response.split("**")
+    setAIResponse(structured_response);
+    setIsLoading(false)
   };
 
   const handleChange = (event) => {
@@ -45,7 +50,7 @@ function App() {
   return (
     <>
       <div>
-      <label htmlFor="my-input">Enter text:</label>
+      <label htmlFor="my-input">Enter text to summarize:</label>
       <input
         type="text"
         id="my-input"
@@ -53,7 +58,21 @@ function App() {
         onChange={handleChange}
       />
       <button onClick={handleConfirm}>Confirm</button>
-      {AIResponse && <p>Your Summary:<br></br> {AIResponse}</p>}
+      {isLoading? (
+        <Spinner animation="border" role="status">
+        <span className="visually-hidden">Response Loading...</span>
+      </Spinner>
+      ) : ( 
+        <>
+        <p className='AI-Response'>Your Summary:<br></br> </p>
+        <ListGroup>
+        {AIResponse.map((res) => (
+          <ListGroup.Item>{res}<br></br><br></br></ListGroup.Item>
+        ))}
+        </ListGroup>
+        </>
+        
+      )}
     </div>
     </>
   )
