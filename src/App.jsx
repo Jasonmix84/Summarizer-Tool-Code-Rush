@@ -31,7 +31,7 @@ function App() {
     });
     console.log("response is ", String(response.text))
     const unstructured_response = String(response.text)
-    const structured_response = unstructured_response.split("**")
+    const structured_response = unstructured_response.split("*")
     setAIResponse(structured_response);
     setIsLoading(false)
   };
@@ -67,7 +67,7 @@ function App() {
         <p className='AI-Response'>Your Summary:<br></br> </p>
         <ListGroup>
         {AIResponse.map((res) => (
-          <ListGroup.Item>{res}<br></br><br></br></ListGroup.Item>
+          <ListGroup.Item>{res}<br></br></ListGroup.Item>
         ))}
         </ListGroup>
         </>
